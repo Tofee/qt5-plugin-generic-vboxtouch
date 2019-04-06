@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QEvent>
 
 class QSocketNotifier;
 class QTouchDevice;
@@ -41,9 +42,8 @@ public:
     ~VirtualboxTouchScreenHandler();
 
 private slots:
-    void handleInput(); // connected to m_notifier
     void shutdown();
-    void handleEvdevInput(int x, int y, Qt::MouseButtons buttons);
+    void handleEvdevInput(int x, int y, bool abs, Qt::MouseButtons buttons, Qt::MouseButton button, QEvent::Type type);
 
 private:
     int m_fd;
