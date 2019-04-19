@@ -125,9 +125,11 @@ void VirtualboxTouchScreenHandler::reportTouch(Qt::TouchPointState state)
 {
     QWindowSystemInterface::TouchPoint tp;
 
-    qreal normal_x = (qreal) m_x;
-    qreal normal_y = (qreal) m_y;
     QRect screen = QGuiApplication::primaryScreen()->geometry();
+    qreal normal_x = (qreal) m_x / (qreal) (screen.width() - 1);
+    qreal normal_y = (qreal) m_y / (qreal) (screen.height() - 1);
+
+//    qCDebug(qLcVBoxTouch) << "vboxtouch: reportTouch at " << m_x <<","<<m_y<< " clicked: " << m_button;
 
     tp.pressure = m_button ? 1 : 0;
     tp.state = state;
