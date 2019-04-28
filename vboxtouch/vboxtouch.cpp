@@ -57,8 +57,20 @@ VirtualboxTouchScreenHandler::VirtualboxTouchScreenHandler(const QString &specif
         specs = env_specification;
     }
     
-    Q_FOREACH (QString option, specs.split(':')) {
-        QString evdev_device = option;
+    QStringList devices = specs.split(':');
+
+    if (devices.isEmpty()) {
+        qCDebug(qLcEvdevMouse) << "evdevmouse: Using device discovery";
+        QDeviceDiscovery *deviceDiscovery = QDeviceDiscovery::create(QDeviceDiscovery::Device_Mouse | QDeviceDiscovery::Device_Touchpad, this);
+        if (deviceDiscovery) {
+            // scan and add already connected keyboards
+            devices = deviceDiscovery->scanConnectedDevices();
+            
+            delete deviceDiscovery; deviceDiscovery = nullptr;
+        }
+    }
+
+    Q_FOREACH (QString evdev_device, devices) {
         qCDebug(qLcVBoxTouch) << "vboxtouch: Using evdev device " << qPrintable(evdev_device);
 
         EvdevMouseHandler *new_mouse = EvdevMouseHandler::create(evdev_device, "abs");
